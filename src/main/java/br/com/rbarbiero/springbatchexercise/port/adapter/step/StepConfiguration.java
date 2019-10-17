@@ -9,9 +9,9 @@ import java.io.InputStream;
 
 @Configuration
 @EnableBatchProcessing
-class StepConfiguration {
+public class StepConfiguration {
 
-    Step step1(final InputStream fileInputStream, File output){
+    public Step step1(final InputStream fileInputStream, File output){
         return null;
     }
 }
