@@ -1,0 +1,28 @@
+image: java:8-jdk
+
+before_script:
+  - chmod ugo+x mvnw
+
+stages:
+  - test
+  - build
+  - run
+
+Tests:
+  stage: test
+  script:
+    - ./mvnw clean test install
+  artifacts:
+    paths:
+      - target/**
+    expire_in: 1 week
+  only:
+    - master
+Build image:
+  stage: build
+  script:
+    - bash gitlab-deploy/build.sh
+Run image:
+  stage: run
+  script:
+    - bash gitlab-deploy/run.sh
