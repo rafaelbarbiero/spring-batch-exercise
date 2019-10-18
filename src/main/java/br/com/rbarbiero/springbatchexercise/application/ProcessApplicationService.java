@@ -19,6 +19,7 @@ import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -27,6 +28,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+@Component
 public class ProcessApplicationService {
 
     private final JobBuilderFactory jobBuilderFactory;
