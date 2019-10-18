@@ -16,6 +16,7 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
+import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,7 +39,8 @@ public class ProcessApplicationService {
     private final JobRepository jobRepository;
 
     ProcessApplicationService(JobBuilderFactory jobBuilderFactory,
-                              StepConfiguration stepConfiguration, JobConfiguration jobConfiguration, Processing processing, JobRepository jobRepository) {
+                              StepConfiguration stepConfiguration, JobConfiguration jobConfiguration,
+                              Processing processing, JobRepository jobRepository) {
         this.jobBuilderFactory = jobBuilderFactory;
         this.stepConfiguration = stepConfiguration;
         this.jobConfiguration = jobConfiguration;
@@ -90,9 +92,13 @@ public class ProcessApplicationService {
                 .resource(new InputStreamResource(inputStream))
                 .delimited()
                 .names(new String[]{"value"})
-                .fieldSetMapper(new BeanWrapperFieldSetMapper<Input>() {{
-                    setTargetType(Input.class);
-                }})
+                .fieldSetMapper(this.fieldSetMapper())
                 .build();
+    }
+
+    private FieldSetMapper fieldSetMapper() {
+        final BeanWrapperFieldSetMapper beanWrapperFieldSetMapper = new BeanWrapperFieldSetMapper();
+        beanWrapperFieldSetMapper.setTargetType(Input.class);
+        return beanWrapperFieldSetMapper;
     }
 }

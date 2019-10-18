@@ -56,8 +56,8 @@ class ProcessApplicationServiceTest {
         final JobExecution process = applicationService.process(validMultipartFile());
         Assertions.assertAll("Checking job execution properties", () -> {
             Assertions.assertNotNull(process.getJobParameters().getString("uuid"));
-            Assertions.assertEquals(process.getJobParameters().getString("uuid"), "filename");
-            Assertions.assertEquals(process.getStatus(), BatchStatus.STARTING);
+            Assertions.assertEquals("filename", process.getJobParameters().getString("uuid"));
+            Assertions.assertEquals(BatchStatus.STARTING, process.getStatus());
         });
     }
 
@@ -118,7 +118,7 @@ class ProcessApplicationServiceTest {
                 new File(""), UUID.randomUUID());
         Assertions.assertAll("Checking job parameters properties", () -> {
             Assertions.assertNotNull(job);
-            Assertions.assertEquals(job.getName(), "job");
+            Assertions.assertEquals("job", job.getName());
         });
     }
 

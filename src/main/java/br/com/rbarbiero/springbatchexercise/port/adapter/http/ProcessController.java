@@ -27,7 +27,7 @@ class ProcessController {
     }
 
     @PostMapping("file")
-    ResponseEntity<String> input(MultipartFile file) throws Exception {
+    public ResponseEntity<String> input(MultipartFile file) throws Exception {
         final JobExecution jobExecution = processApplicationService.process(file);
         return ResponseEntity.created(ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -38,7 +38,7 @@ class ProcessController {
     }
 
     @GetMapping("file/{id}")
-    ResponseEntity<FileSystemResource> output(@PathVariable UUID id) {
+    public ResponseEntity<FileSystemResource> output(@PathVariable UUID id) {
         final File output = processApplicationService.getFile(id);
         return ResponseEntity.ok()
                 .header("Content-Disposition", String.format("attachment; filename=%s.csv", id))
