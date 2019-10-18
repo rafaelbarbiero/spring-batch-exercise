@@ -1,5 +1,6 @@
 package br.com.rbarbiero.springbatchexercise.application;
 
+import br.com.rbarbiero.springbatchexercise.domain.Input;
 import br.com.rbarbiero.springbatchexercise.domain.Processing;
 import br.com.rbarbiero.springbatchexercise.port.adapter.listener.JobCompletionNotificationListener;
 import br.com.rbarbiero.springbatchexercise.port.adapter.step.StepConfiguration;
@@ -14,6 +15,10 @@ import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
+import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
+import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -61,10 +66,24 @@ public class ProcessApplicationService {
     }
 
     private Job createJob(final InputStream inputStream, File output) {
+        final ItemReader<Input> reader = this.createReader(inputStream);
         return jobBuilderFactory.get("job")
                 .incrementer(new RunIdIncrementer())
                 .listener(listener)
-                .flow(stepConfiguration.step1(inputStream, output))
+                .flow(stepConfiguration.step1(output, reader))
                 .end().build();
+    }
+
+    private ItemReader<Input> createReader(final InputStream inputStream) {
+        return new FlatFileItemReaderBuilder<Input>()
+                .name("inputStreamItemReader")
+                .linesToSkip(1)
+                .resource(new InputStreamResource(inputStream))
+                .delimited()
+                .names(new String[]{"value"})
+                .fieldSetMapper(new BeanWrapperFieldSetMapper<Input>() {{
+                    setTargetType(Input.class);
+                }})
+                .build();
     }
 }
