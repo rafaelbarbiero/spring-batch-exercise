@@ -6,10 +6,10 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 
-@Component
+@Component public
 class WriterConfiguration {
 
-    FlatFileItemWriter<Result> writer(final File output) {
+    public FlatFileItemWriter<Result> writer(final File output) {
         return null;
     }
 }

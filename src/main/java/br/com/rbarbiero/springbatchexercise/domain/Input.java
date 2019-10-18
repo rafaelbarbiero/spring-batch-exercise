@@ -1,4 +1,4 @@
-package br.com.rbarbiero.springbatchexercise.port.adapter.http;
+package br.com.rbarbiero.springbatchexercise.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
