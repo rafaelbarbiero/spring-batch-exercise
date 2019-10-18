@@ -2,10 +2,6 @@ package br.com.rbarbiero.springbatchexercise.port.adapter.http;
 
 import br.com.rbarbiero.springbatchexercise.application.ProcessApplicationService;
 import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobParametersInvalidException;
-import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
-import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
-import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.File;
-import java.io.IOException;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/")
@@ -30,19 +26,19 @@ class ProcessController {
         this.processApplicationService = processApplicationService;
     }
 
-    @PostMapping("input")
-    ResponseEntity<String> create(MultipartFile file) throws Exception {
+    @PostMapping("file")
+    ResponseEntity<String> input(MultipartFile file) throws Exception {
         final JobExecution jobExecution = processApplicationService.process(file);
         return ResponseEntity.created(ServletUriComponentsBuilder
                 .fromCurrentRequest()
-                .path("/{filename}")
-                .buildAndExpand(jobExecution.getJobParameters().getString("filename"))
+                .path("/{uuid}")
+                .buildAndExpand(jobExecution.getJobParameters().getString("uuid"))
                 .toUri())
                 .body(jobExecution.getStatus().toString());
     }
 
-    @GetMapping("output/{id}")
-    ResponseEntity<FileSystemResource> output(@PathVariable String id) {
+    @GetMapping("file/{id}")
+    ResponseEntity<FileSystemResource> output(@PathVariable UUID id) {
         final File output = processApplicationService.getFile(id);
         return ResponseEntity.ok()
                 .header("Content-Disposition", String.format("attachment; filename=%s.csv", id))

@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -44,29 +45,30 @@ class ProcessControllerTest {
     @DisplayName("Deve retornar nome do recurso no header location")
     void create() throws Exception {
         final Map parameters = new HashMap<String, String>();
-        parameters.put("filename", new JobParameter("mockFileName.csv"));
+        parameters.put("uuid", new JobParameter("mockFileName.csv"));
         final JobParameters jobParameters = new JobParameters(parameters);
         Mockito.when(processApplicationService.process(any())).thenReturn(new JobExecution(1L, jobParameters));
-        this.mockMvc.perform(post("/input")
+        this.mockMvc.perform(post("/file")
                 .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isCreated())
-                .andExpect(header().string("Location", "http://localhost/input/mockFileName.csv"));
+                .andExpect(header().string("Location", "http://localhost/file/mockFileName.csv"));
     }
 
     @Test
     @DisplayName("Deve retornar arquivo processado no corpo da requisição")
     void output() throws Exception {
-        Mockito.when(processApplicationService.getFile(anyString())).thenReturn(new File("mockFile.csv"));
-        this.mockMvc.perform(get("/output/mockFile"))
+        Mockito.when(processApplicationService.getFile(any(UUID.class))).thenReturn(new File("mockFile.csv"));
+        UUID uuid = UUID.randomUUID();
+        this.mockMvc.perform(get(String.format("/file/%s", uuid)))
                 .andExpect(status().isOk())
-                .andExpect(header().stringValues("Content-Disposition", "attachment; filename=mockFile.csv"))
+                .andExpect(header().stringValues("Content-Disposition", String.format("attachment; filename=%s.csv", uuid)))
                 .andExpect(content().contentType(MediaType.parseMediaType("text/csv")));
     }
 
     @Test
     @DisplayName("Deve retornar not found quando não encontrar o arquivo processado")
     void outputNotFound() throws Exception {
-        Mockito.when(processApplicationService.getFile(anyString())).thenThrow(new ProcessedFileNotFoundException(new IOException("mockFile")));
-        this.mockMvc.perform(get("/output/mockFile")).andExpect(status().isNotFound());
+        Mockito.when(processApplicationService.getFile(any(UUID.class))).thenThrow(new ProcessedFileNotFoundException());
+        this.mockMvc.perform(get(String.format("/file/%s", UUID.randomUUID()))).andExpect(status().isNotFound());
     }
 }
