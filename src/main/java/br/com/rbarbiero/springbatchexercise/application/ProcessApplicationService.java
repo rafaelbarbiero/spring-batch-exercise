@@ -4,11 +4,16 @@ import br.com.rbarbiero.springbatchexercise.domain.Processing;
 import br.com.rbarbiero.springbatchexercise.port.adapter.listener.JobCompletionNotificationListener;
 import br.com.rbarbiero.springbatchexercise.port.adapter.step.StepConfiguration;
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
+import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
+import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -32,12 +37,12 @@ public class ProcessApplicationService {
         this.jobLauncher = jobLauncher;
     }
 
-    public String process(MultipartFile file) throws IOException {
+    public JobExecution process(MultipartFile file) throws IOException, JobParametersInvalidException,
+            JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
         final File tempFile = this.createTempFile();
         final Job job = this.createJob(file.getInputStream(), tempFile);
         final JobParameters jobParameters = this.createJobParameters(tempFile.getName());
-        Processing.process(job, jobParameters, jobLauncher);
-        return tempFile.getName();
+        return Processing.process(job, jobParameters, jobLauncher);
     }
 
     public File getFile(final String id) {
@@ -47,7 +52,7 @@ public class ProcessApplicationService {
 
     private JobParameters createJobParameters(final String fileName) {
         final Map parameters = new HashMap<String, String>();
-        parameters.put("fileName", new JobParameter(fileName));
+        parameters.put("filename", new JobParameter(fileName));
         return new JobParameters(parameters);
     }
 

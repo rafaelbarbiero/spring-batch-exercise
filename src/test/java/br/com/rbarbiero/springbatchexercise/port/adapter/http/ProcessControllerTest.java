@@ -6,12 +6,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobParameter;
+import org.springframework.batch.core.JobParameters;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -38,11 +43,14 @@ class ProcessControllerTest {
     @Test
     @DisplayName("Deve retornar nome do recurso no header location")
     void create() throws Exception {
-        Mockito.when(processApplicationService.process(any())).thenReturn("idMockFile.csv");
+        final Map parameters = new HashMap<String, String>();
+        parameters.put("filename", new JobParameter("mockFileName.csv"));
+        final JobParameters jobParameters = new JobParameters(parameters);
+        Mockito.when(processApplicationService.process(any())).thenReturn(new JobExecution(1L, jobParameters));
         this.mockMvc.perform(post("/input")
                 .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isCreated())
-                .andExpect(header().string("Location", "http://localhost/input/idMockFile.csv"));
+                .andExpect(header().string("Location", "http://localhost/input/mockFileName.csv"));
     }
 
     @Test

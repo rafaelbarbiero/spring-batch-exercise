@@ -1,6 +1,11 @@
 package br.com.rbarbiero.springbatchexercise.port.adapter.http;
 
 import br.com.rbarbiero.springbatchexercise.application.ProcessApplicationService;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobParametersInvalidException;
+import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
+import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
+import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.File;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/")
@@ -25,14 +31,14 @@ class ProcessController {
     }
 
     @PostMapping("input")
-    ResponseEntity<Void> create(MultipartFile file) {
-        final String filename = processApplicationService.process(file);
+    ResponseEntity<String> create(MultipartFile file) throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, IOException {
+        final JobExecution jobExecution = processApplicationService.process(file);
         return ResponseEntity.created(ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{filename}")
-                .buildAndExpand(filename)
+                .buildAndExpand(jobExecution.getJobParameters().getString("filename"))
                 .toUri())
-                .build();
+                .body(jobExecution.getStatus().toString());
     }
 
     @GetMapping("output/{id}")
