@@ -8,10 +8,12 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
+import org.springframework.stereotype.Component;
 
+@Component
 public class Processing {
 
-    public static JobExecution process(Job job, JobParameters jobParameters, JobLauncher jobLauncher)
+    public JobExecution process(Job job, JobParameters jobParameters, JobLauncher jobLauncher)
             throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException,
             JobInstanceAlreadyCompleteException {
         return jobLauncher.run(job, jobParameters);

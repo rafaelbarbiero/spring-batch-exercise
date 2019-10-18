@@ -29,17 +29,19 @@ import java.util.Map;
 
 public class ProcessApplicationService {
 
-    final JobBuilderFactory jobBuilderFactory;
-    final JobCompletionNotificationListener listener;
-    final StepConfiguration stepConfiguration;
-    final JobLauncher jobLauncher;
+    private final JobBuilderFactory jobBuilderFactory;
+    private final JobCompletionNotificationListener listener;
+    private final StepConfiguration stepConfiguration;
+    private final JobLauncher jobLauncher;
+    private final Processing processing;
 
-    public ProcessApplicationService(JobBuilderFactory jobBuilderFactory, JobCompletionNotificationListener listener,
-                                     StepConfiguration stepConfiguration, JobLauncher jobLauncher) {
+    ProcessApplicationService(JobBuilderFactory jobBuilderFactory, JobCompletionNotificationListener listener,
+                              StepConfiguration stepConfiguration, JobLauncher jobLauncher, Processing processing) {
         this.jobBuilderFactory = jobBuilderFactory;
         this.listener = listener;
         this.stepConfiguration = stepConfiguration;
         this.jobLauncher = jobLauncher;
+        this.processing = processing;
     }
 
     public JobExecution process(MultipartFile file) throws IOException, JobParametersInvalidException,
@@ -47,7 +49,7 @@ public class ProcessApplicationService {
         final File tempFile = this.createTempFile();
         final Job job = this.createJob(file.getInputStream(), tempFile);
         final JobParameters jobParameters = this.createJobParameters(tempFile.getName());
-        return Processing.process(job, jobParameters, jobLauncher);
+        return processing.process(job, jobParameters, jobLauncher);
     }
 
     public File getFile(final String id) {
