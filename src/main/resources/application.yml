@@ -1,0 +1,6 @@
+app:
+  config:
+    sheet:
+      header: "Número, Par/Impar, Múltiplo17, Resto17"
+  extractor:
+    fields: value, pair, multiple, rest

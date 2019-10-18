@@ -4,7 +4,6 @@ import br.com.rbarbiero.springbatchexercise.domain.Input;
 import br.com.rbarbiero.springbatchexercise.domain.Processing;
 import br.com.rbarbiero.springbatchexercise.domain.exception.ProcessedFileNotFoundException;
 import br.com.rbarbiero.springbatchexercise.port.adapter.job.JobConfiguration;
-import br.com.rbarbiero.springbatchexercise.port.adapter.listener.JobCompletionNotificationListener;
 import br.com.rbarbiero.springbatchexercise.port.adapter.step.StepConfiguration;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Job;
@@ -33,16 +32,14 @@ public class ProcessApplicationService {
 
     private static final String TEMP_DIR = System.getProperty("java.io.tmpdir");
     private final JobBuilderFactory jobBuilderFactory;
-    private final JobCompletionNotificationListener listener;
     private final StepConfiguration stepConfiguration;
     private final JobConfiguration jobConfiguration;
     private final Processing processing;
-    final JobRepository jobRepository;
+    private final JobRepository jobRepository;
 
-    ProcessApplicationService(JobBuilderFactory jobBuilderFactory, JobCompletionNotificationListener listener,
+    ProcessApplicationService(JobBuilderFactory jobBuilderFactory,
                               StepConfiguration stepConfiguration, JobConfiguration jobConfiguration, Processing processing, JobRepository jobRepository) {
         this.jobBuilderFactory = jobBuilderFactory;
-        this.listener = listener;
         this.stepConfiguration = stepConfiguration;
         this.jobConfiguration = jobConfiguration;
         this.processing = processing;
@@ -60,7 +57,6 @@ public class ProcessApplicationService {
     public File getFile(final UUID id) {
         final Map parameters = new HashMap<String, String>();
         parameters.put("uuid", new JobParameter(id.toString()));
-        new JobParameters(parameters);
         final JobExecution lastJobExecution = jobRepository.getLastJobExecution(id.toString(), new JobParameters(parameters));
         return Optional.ofNullable(lastJobExecution)
                 .map(JobExecution::getStatus)
@@ -69,26 +65,25 @@ public class ProcessApplicationService {
                 .orElseThrow(ProcessedFileNotFoundException::new);
     }
 
-    private JobParameters createJobParameters(final String fileName) {
+    JobParameters createJobParameters(final String uuid) {
         final Map parameters = new HashMap<String, String>();
-        parameters.put("uuid", new JobParameter(fileName));
+        parameters.put("uuid", new JobParameter(uuid));
         return new JobParameters(parameters);
     }
 
-    private File createTempFile(UUID uuid) {
+    File createTempFile(UUID uuid) {
         return new File(String.format("%s/%s.%s", TEMP_DIR, uuid, "csv"));
     }
 
-    private Job createJob(final InputStream inputStream, File output, final UUID uuid) {
+    Job createJob(final InputStream inputStream, File output, final UUID uuid) {
         final ItemReader<Input> reader = this.createReader(inputStream);
         return jobBuilderFactory.get(uuid.toString())
                 .incrementer(new RunIdIncrementer())
-                .listener(listener)
                 .flow(stepConfiguration.step1(output, reader))
                 .end().build();
     }
 
-    private ItemReader<Input> createReader(final InputStream inputStream) {
+    ItemReader<Input> createReader(final InputStream inputStream) {
         return new FlatFileItemReaderBuilder<Input>()
                 .name("inputStreamItemReader")
                 .linesToSkip(1)

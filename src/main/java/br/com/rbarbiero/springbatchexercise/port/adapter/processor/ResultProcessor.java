@@ -11,12 +11,6 @@ public class ResultProcessor implements ItemProcessor<Input, Result> {
 
     @Override
     public Result process(final Input input) {
-
-        try {
-            Thread.sleep(60);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         final int value = input.getValue();
         final int multiple = value / 17;
         final int rest = value % 17;
