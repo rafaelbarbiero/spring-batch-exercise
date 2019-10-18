@@ -31,7 +31,7 @@ class ProcessController {
     }
 
     @PostMapping("input")
-    ResponseEntity<String> create(MultipartFile file) throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, IOException {
+    ResponseEntity<String> create(MultipartFile file) throws Exception {
         final JobExecution jobExecution = processApplicationService.process(file);
         return ResponseEntity.created(ServletUriComponentsBuilder
                 .fromCurrentRequest()
