@@ -7,12 +7,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.job.SimpleJob;
 import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.batch.core.launch.support.SimpleJobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
@@ -42,7 +40,7 @@ class ProcessingTest {
             Assertions.assertNotNull(jobCapture.getValue());
             Assertions.assertNotNull(jobParametersCapture.getValue());
             Assertions.assertNotNull(jobParametersCapture.getValue().getString("uuid"));
-            Assertions.assertEquals(jobParametersCapture.getValue().getString("uuid"), "filename");
+            Assertions.assertEquals("filename", jobParametersCapture.getValue().getString("uuid"));
         });
     }
 }

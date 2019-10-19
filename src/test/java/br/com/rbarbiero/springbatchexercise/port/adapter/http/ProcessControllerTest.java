@@ -2,6 +2,8 @@ package br.com.rbarbiero.springbatchexercise.port.adapter.http;
 
 import br.com.rbarbiero.springbatchexercise.application.ProcessApplicationService;
 import br.com.rbarbiero.springbatchexercise.domain.exception.ProcessedFileNotFoundException;
+import br.com.rbarbiero.springbatchexercise.port.adapter.http.controller.ApiExceptionHandler;
+import br.com.rbarbiero.springbatchexercise.port.adapter.http.controller.ProcessController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,13 +16,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;

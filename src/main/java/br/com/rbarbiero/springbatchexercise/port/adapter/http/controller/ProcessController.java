@@ -1,6 +1,7 @@
-package br.com.rbarbiero.springbatchexercise.port.adapter.http;
+package br.com.rbarbiero.springbatchexercise.port.adapter.http.controller;
 
 import br.com.rbarbiero.springbatchexercise.application.ProcessApplicationService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.MediaType;
@@ -18,11 +19,11 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/")
-class ProcessController {
+public class ProcessController {
 
     final ProcessApplicationService processApplicationService;
 
-    ProcessController(ProcessApplicationService processApplicationService) {
+    public ProcessController(ProcessApplicationService processApplicationService) {
         this.processApplicationService = processApplicationService;
     }
 
