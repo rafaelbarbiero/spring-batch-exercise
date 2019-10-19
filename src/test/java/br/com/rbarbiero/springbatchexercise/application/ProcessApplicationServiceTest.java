@@ -8,6 +8,7 @@ import br.com.rbarbiero.springbatchexercise.port.adapter.processor.ResultProcess
 import br.com.rbarbiero.springbatchexercise.port.adapter.step.StepConfiguration;
 import br.com.rbarbiero.springbatchexercise.port.adapter.writer.WriterConfiguration;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.BatchStatus;
@@ -39,14 +40,20 @@ class ProcessApplicationServiceTest {
     final JobConfiguration jobConfiguration = mock(JobConfiguration.class);
     final Processing processing = mock(Processing.class);
     final JobRepository jobRepository = mock(JobRepository.class);
-    final StepConfiguration stepConfiguration = new StepConfiguration(
-            new StepBuilderFactory(jobRepository, new ResourcelessTransactionManager()),
-            new ResultProcessor(),
-            new WriterConfiguration("headers", Arrays.asList("fields")));
-    final ProcessApplicationService applicationService = new ProcessApplicationService(factory, stepConfiguration,
-            jobConfiguration, processing, jobRepository);
+    ProcessApplicationService applicationService;
+    StepConfiguration stepConfiguration;
 
     private static final String TEMP_DIR = System.getProperty("java.io.tmpdir");
+
+    @BeforeEach
+    void setUp() {
+        stepConfiguration = new StepConfiguration(
+                new StepBuilderFactory(jobRepository, new ResourcelessTransactionManager()),
+                new ResultProcessor(),
+                new WriterConfiguration("headers", Arrays.asList("fields")));
+        applicationService = new ProcessApplicationService(factory, stepConfiguration,
+                jobConfiguration, processing, jobRepository);
+    }
 
     @Test
     @DisplayName("Deve retornar Job Execution criado com sucesso")

@@ -19,7 +19,7 @@ public class ResultProcessor implements ItemProcessor<Input, Result> {
                 .value(value)
                 .multiple(multiple)
                 .rest(rest)
-                .pair(pair.name())
+                .pair(pair)
                 .build();
     }
 }

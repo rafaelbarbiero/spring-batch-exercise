@@ -10,9 +10,9 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-class ProcessApplicationServiceTestFixture {
+public class ProcessApplicationServiceTestFixture {
 
-    static JobParameters validJobParameters() {
+    public static JobParameters validJobParameters() {
         final Map parameters = new HashMap<String, String>();
         parameters.put("uuid", new JobParameter("filename"));
         return new JobParameters(parameters);
