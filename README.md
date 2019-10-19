@@ -31,9 +31,9 @@ Para construir a aplicação com **docker**:
 1. Navegue até a url http://localhost:8080/swagger-ui.html
 2. Envie o arquivo para processamento no respectivo endpoint descrito na documentação. 
 O retorno terá a url do recurso com seu identificador no *header* ***location***.
-3. Para recupera o arquivo processado:
+3. Para recuperar o arquivo processado:
     1. **Método 1** - **GET** - url contida no *header* ***location***
     2. **Método 2** - Use apenas o identificador no respectivo endpoint descrito na documentação
 
 **Utilizando o serviço na AWS**
-1. Este projeto está hospedado no -serviço de computação em nuvem **Amazon AWS** disponibilizado na seguinte URL: **http://18.228.14.78:8080/swagger-ui.html**
+1. Esta aplicação está hospedado no serviço de computação em nuvem **Amazon AWS** disponibilizado na seguinte URL: **http://18.228.14.78:8080/swagger-ui.html**
