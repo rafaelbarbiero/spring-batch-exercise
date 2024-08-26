@@ -20,7 +20,7 @@
         <lombok.version>1.18.10</lombok.version>
         <jacoco.version>0.8.5</jacoco.version>
         <jacoco.plugin.version>2.22.2</jacoco.plugin.version>
-        <swagger.version>2.9.2</swagger.version>
+        <swagger.version>2.10.0</swagger.version>
     </properties>
 
     <dependencies>
